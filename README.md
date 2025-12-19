@@ -11,3 +11,5 @@ Type the command ```/allitems```, the recepie for all the items (current new at 
 ### Note: Banned List
 
 The banend list contains substrings that the program filters out to reduce the amount of repetitive items.
+
+CREDITS TO: MR. CHESTPLATE UNDER THE LICENSE ENTAILED IN GITHUB.
