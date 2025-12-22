@@ -4,9 +4,9 @@ Copy and Paste the code in ```wordcode.js``` to your world code.
 
 Type the command ```/all```, this would make the script start scanning for blocks and items. The blocks would be added to the Workbench while the items would be added to the Artisan Bench.
 
-##### IMPORTANT NOTE! You need to have a stone in inventory to "craft" items and blocks, and you need to throw them on the ground and then pick up to be able to ACTUALLY place it.
+##### IMPORTANT NOTE! You need to have a stone in inventory to "craft" items and blocks, and you need to throw the crafted "illegal" blocks on the ground and then pick up to be able to ACTUALLY place it.
 
-### Note: Banned List
+## Note: Banned List
 
 The banend list contains substrings that the program filters out to reduce the amount of repetitive items.
 
