@@ -9,6 +9,7 @@ function banned(bannedlist, id){
 	btm=api.blockIdToBlockName(id)
     if (btm.includes(md)){
       res=true
+	  
       return res
     }}catch{
 		return 1
@@ -18,10 +19,17 @@ function banned(bannedlist, id){
 }
 blks_cnt={}
 itms_cnt={}
+blcked_cnt={}
+sttimes={}
+finid={}
+endtimes={}
 function tick(){
    var opsBudget = 50;
     while (opsBudget > 0 && jobQueue.length > 0) {
         var job = jobQueue[0];
+		if (sttimes[job.playerId][0]===0){
+			sttimes[job.playerId][0]=api.now()
+		}
 		bdl=banned(bannedlist, job.currentN)
         if (!bdl && bdl!==1){
 			try{
@@ -33,13 +41,29 @@ function tick(){
            api.sendMessage(job.playerId,"Loading Blocks to Workbench. ID: "+job.currentN)
 		   //api.setClientOption(job.playerId, "middleTextLower", "Loading Blocks to Workbench. ID: "+job.currentN)
 			blks_cnt[job.playerId]++
-        }else if (bdl===1){
+        }else if (bdl===true){
+			blcked_cnt[job.playerId]++
+		}else if (bdl===1){
+			if (endtimes[job.playerId][0]===0){
+				endtimes[job.playerId][0]=api.now()
+			}
+			if (finid[job.playerId][0]===0){
+				finid[job.playerId][0]=job.currentN
+			}
+			if (sttimes[job.playerId][1]===0){
+				sttimes[job.playerId][1]=api.now()
+			}
 			try{
            api.editItemCraftingRecipes(job.playerId, job.currentN + "", [{
                requires: [{ items: ["Stone"], amt: 0 }],
                produces: 1,
                station: "Artisan Bench"
-           }]);}catch{job.end=true}
+           }]);}catch{
+			job.end=true
+
+			endtimes[job.playerId][1]=api.now()
+			finid[job.playerId][1]=job.currentN
+		   }
            api.sendMessage(job.playerId,"Loading Items to Artisan Bench. ID: "+job.currentN)
 			//api.setClientOption(job.playerId, "middleTextLower", "Loading Items to Artisan Bench. ID: "+job.currentN)
 			itms_cnt[job.playerId]++
@@ -68,6 +92,10 @@ function playerCommand(id,cmd){
   if (cmd==="all"){
 	blks_cnt[id]=0
 	itms_cnt[id]=0
+	blcked_cnt[id]=0
+	sttimes[id]=[0,0]
+	endtimes[id]=[0,0]
+	finid[id]=[0,0]
 	jobQueue.push({
          playerId: id,
          currentN: 2,
@@ -79,7 +107,7 @@ function playerCommand(id,cmd){
 		if (!blks_cnt[id]){
 			api.sendMessage(id, "ERROR: YOU HAVE NOT STARTED LOADING ITEMS, USE /all TO START LOADING ITEMS")
 		}else{
-			api.sendMessage(id, "Currently loaded "+blks_cnt[id]+" blocks and "+itms_cnt[id]+" items.")
+			api.sendMessage(id, "Currently loaded "+(blks_cnt[id]+itms_cnt[id])+" objects: "+blks_cnt[id]+" blocks and "+itms_cnt[id]+" items.\nFinal ID for Blocks is "+finid[id][0]+", final ID for Items is "+finid[id][1]+"\nTotal Time: "+((endtimes[id][0]-sttimes[id][0])+(endtimes[id][1]-sttimes[id][1]))+"ms.\nTime for loading blocks: "+(endtimes[id][0]-sttimes[id][0])+"ms.\nTime for loading items: "+(endtimes[id][1]-sttimes[id][1])+"ms.\nBlocked "+blcked_cnt[id]+" blocks in total due to banned list. Use /bannedlist to check it out, and /bannedlist add [name] and /bannedlist remove [index] to edit. Use /bannedlist restore to restore.")
 		}
 		return true
 	}else if (cmd.split(" ")[0]==="bannedlist"){
