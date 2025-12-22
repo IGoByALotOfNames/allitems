@@ -11,8 +11,11 @@ Type the command ```/all```, this would make the script start scanning for block
 The banend list contains substrings that the program filters out to reduce the amount of repetitive items.
 
 Use ```/bannedlist``` to check currently banned substrings.
+
 Use ```/bannedlist add [string]``` to add a substring to banned list
+
 Use ```/bannedlist remove [index]``` to remove a substring at that index (index starts at 1)
+
 Use ```/bannedlist restore``` restores banned list to original
 
 CREDITS TO: MR. CHESTPLATE UNDER THE LICENSE ENTAILED IN GITHUB.
